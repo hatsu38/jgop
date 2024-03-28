@@ -49,8 +49,15 @@ export default {
 				}
 			}
 
+			const headers = new Headers({
+				'Content-Type': 'application/json',
+				'Access-Control-Allow-Origin': '*', // すべてのオリジンからのアクセスを許可
+				'Access-Control-Allow-Methods': 'GET, POST', // 許可するHTTPメソッド
+				'Access-Control-Allow-Headers': 'Content-Type' // 許可するヘッダー
+			});
+
 			return new Response(JSON.stringify(ogpData), {
-				headers: { 'content-type': 'application/json' },
+				headers,
 			});
 		} catch (error) {
 			console.error('Error fetching OGP:', error);
