@@ -27,6 +27,34 @@ export interface Env {
 
 export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
+		const originUrl = new URL(request.url);
+		const url = originUrl.searchParams.get('url');
+		if (!url) {
+			return new Response('url is required', { status: 400 });
+		}
+
+		try {
+			const response = await fetch(url);
+			const html = await response.text();
+
+			const ogpData: { [key: string]: string } = {};
+			const ogMetaRegex = /<meta\s+(property="(og:[^"]+)"\s+content="([^"]+)"|content="([^"]+)"\s+property="(og:[^"]+)")/gi;
+			let match;
+
+			while ((match = ogMetaRegex.exec(html)) !== null) {
+				const property = match[2] || match[5];
+				const content = match[3] || match[4];
+				if (property && content) {
+					ogpData[property] = content;
+				}
+			}
+
+			return new Response(JSON.stringify(ogpData), {
+				headers: { 'content-type': 'application/json' },
+			});
+		} catch (error) {
+			console.error('Error fetching OGP:', error);
+			return new Response('Error fetching OGP', { status: 500 });
+		}
+	}
 };
