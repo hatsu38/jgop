@@ -49,11 +49,16 @@ export default {
 				}
 			}
 
+			// requestされた元のホストを取得する
+			const originHost = request.headers.get('origin') || "";
+			// *insight-sky.comであるかどうかを判定する
+			const isAllowOrigin = /insight-sky\.com$/.test(originHost);
+
 			const headers = new Headers({
 				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*', // すべてのオリジンからのアクセスを許可
-				'Access-Control-Allow-Methods': 'GET, POST', // 許可するHTTPメソッド
-				'Access-Control-Allow-Headers': 'Content-Type' // 許可するヘッダー
+				'Access-Control-Allow-Origin': isAllowOrigin ? originHost : "", // 許可するオリジン
+				'Access-Control-Allow-Methods': 'GET', // 許可するHTTPメソッド
+				'Access-Control-Allow-Headers': '*', // 許可するリクエストヘッダ
 			});
 
 			return new Response(JSON.stringify(ogpData), {
@@ -63,5 +68,5 @@ export default {
 			console.error('Error fetching OGP:', error);
 			return new Response('Error fetching OGP', { status: 500 });
 		}
-	}
+	},
 };
