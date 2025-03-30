@@ -51,8 +51,8 @@ export default {
 
 			// requestされた元のホストを取得する
 			const originHost = request.headers.get('origin') || "";
-			// *insight-sky.comであるかどうかを判定する
-			const isAllowOrigin = /insight-sky\.com$/.test(originHost);
+			// *is-kagami.comであるかどうかを判定する
+			const isAllowOrigin = /is-kagami\.com$/.test(originHost);
 
 			const headers = new Headers({
 				'Content-Type': 'application/json',
